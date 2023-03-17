@@ -1,0 +1,49 @@
+<#@ output extension=".g.cs" #>
+<#@ assembly name="System.IO" #>
+<#@ parameter name="throwError" type="System.Boolean" #>
+<#@ parameter name="output" type="System.String" #>
+<#
+    string stamp = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+    string suffix = System.Guid.NewGuid().ToString("N");
+
+    var errorBuilder = new System.Text.StringBuilder();
+
+    try
+    {
+
+        if (!System.IO.Directory.Exists(output))
+        {
+            System.IO.Directory.CreateDirectory(output);
+        }
+
+        if (throwError)
+        {
+            throw new System.Exception();
+        }
+    }
+    catch (System.Exception exp)
+    {
+        errorBuilder.AppendLine("/*");
+        errorBuilder.AppendLine("following error occurred while generating code:");
+        errorBuilder.AppendLine("**********************************************");
+        errorBuilder.AppendLine(exp.ToString());
+        errorBuilder.AppendLine("**********************************************");
+        errorBuilder.AppendLine("*/");
+    }
+
+    string error = errorBuilder.ToString();
+#>
+// 
+// auto-generated
+// 
+// at <#= stamp #>
+// 
+<#= error #>
+/// <summary>
+/// 
+/// </summary>
+class SomeClass_<#= suffix #>
+{
+    public const string output = @"<#= output #>";
+}
